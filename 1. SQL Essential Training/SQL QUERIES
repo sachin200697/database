@@ -1,0 +1,329 @@
+-----------------------SQL OVERVIEW----------------------
+---------------------------------------------------------
+
+-- Treating literal string as database table
+SELECT 'Hello, world';    -- op: Hello, World
+
+--give string database a name(column name)
+SELECT 'Hello, world' as Result;
+
+SELECT * FROM Country;
+
+--Selecting 5 rows with where condition
+SELECT Name, Continent, Region FROM Country WHERE Continent = 'Europe' OR Continent is NULL LIMIT 5;
+
+--Selecting next five rows
+SELECT Name, Continent, Region FROM Country WHERE Continent = 'Europe' LIMIT 5 OFFSET 5;
+
+SELECT Name, Continent, Region FROM Country WHERE Continent = 'Europe' LIMIT 10, 5;    --here 10 is offset
+
+--5 rows after first 10 rows
+SELECT Name, Continent, Region FROM Country WHERE Continent = 'Europe' LIMIT 5 OFFSET 10;
+
+--as clause
+SELECT Name AS 'Country Name', Continent, Region FROM Country;
+
+--Count rows
+SELECT Count(*) FROM Country WHERE Continent = 'Europe';
+
+----------------------------------------------------------------------------------------------
+
+SELECT * FROM Customer;
+
+--insert records
+INSERT INTO Customer(Name, Address, City, State, Zip) VALUES('Sachin', '23/6', 'Bulandshahr', 'U.P', '203001');
+
+--update table
+UPDATE Customer SET Name = 'Pradeep' WHERE id = 4;
+--Update test set b='Homecoming', c = 'Undisputed' where a=6 --to update more than one column at once
+
+--delete
+DELETE FROM Customer WHERE id = 4;
+SELECT * FROM Customer;
+
+
+--------------------------------------------------------------------
+----------------------Fundamental Concepts--------------------------
+--------------------------------------------------------------------
+--create table
+create table test(
+a integer(7),
+b text
+);
+
+--create table only if it does not exists already
+create table if not exists test(
+a integer(7),
+b text,
+c text
+);
+
+--create table with not nul, unique and default constraints
+create table if not exists test(
+a integer(7) not null,
+b text default 'New York',
+c text unique
+);
+
+--insert default values
+insert into test default values;  --null will be inserted
+select * from test;
+
+--insert from another table
+insert into test select * from item;
+
+--select rows with null values
+select * from test where a is null;
+
+--alter table structure
+alter table test add d text;
+alter table test add e text default 'Panda';
+
+--creating table with primary key
+create table test(id integer primary key, b text);
+insert into test(b) values('sachin');    -- primary key field will be getting generated automatically and will be unique
+
+select * from test where a in (1,2);
+select * from test where b like '%uty';
+select distinct a, b from test;    --it will select all row where a, b together are unique
+select * from test order by a;    -- sort in ascending order
+select * from test order by a asc;    --same as above
+select * from test order by a desc;    -- sort in descinding order
+
+
+--conditional expressions
+--every 0 value is false in sql
+select     
+case when a then 'true' else 'false' end as boolA,    -- if a is not zero then a will be true and we are naming the column a as boolA
+case when b then 'true' else 'false' end as boolB
+from test
+;
+
+select 
+case a when 1 then 'true' else 'false' end as boolA,    --if a equal to 1 then true other wise fase and we are naming the column a as boolA
+case b when 1 then 'true' else 'false' end as boolB
+from test;
+
+--deleting a table 
+drop table test;
+
+--delete table only if exists
+drop table if exists test;
+
+
+--------------------------------------------------------------------
+----------------------Relationship--------------------------
+--------------------------------------------------------------------
+create table left(id integer, description text);
+create table right(id integer, description text);
+
+insert into left values(1, 'left 01');
+insert into left values(2, 'left 02');
+insert into left values(3, 'left 03');
+insert into left values(4, 'left 04');
+insert into left values(5, 'left 05');
+insert into left values(6, 'left 06');
+insert into left values(7, 'left 07');
+insert into left values(8, 'left 08');
+insert into left values(9, 'left 09');
+
+insert into right values(6, 'right 06');
+insert into right values(7, 'right 07');
+insert into right values(8, 'right 08');
+insert into right values(9, 'right 09');
+insert into right values(10, 'right 10');
+insert into right values(11, 'right 11');
+insert into right values(11, 'right 12');
+insert into right values(11, 'right 13');
+insert into right values(11, 'right 14');
+
+select * from left;
+select * from right;
+
+--inner join
+Select l.description as Left, r.description as Right from left as l inner join right as r on l.id = r.id;
+
+--left join(left outer join) 
+--we can also achieve left join by simply chaning the left table with right and right table with left.
+Select l.description as Left, r.description as Right from left as l left join right as r on l.id = r.id;
+
+
+--------------------------------------------------------------------
+----------------------Strings--------------------------
+--------------------------------------------------------------------
+--need to use two times quore to use it inside string
+Select 'It''s mine' as Sentence; 
+
+--concatination
+select 'hello' || ' ' || 'sachin' as Sentence;
+
+/*select concat('hi', 'hello')*/; --mysql supports it but sqllite not
+
+select length('hello');
+
+select length(b) as len, a, b, c  from test order by len;
+
+--select subsrt("Hello India", 7, 2);--not supported by SQLite
+
+select trim('  Oh it is working  ');
+select ltrim('  Oh it is working  ');
+select rtrim('  Oh it is working  ');
+select trim('.....Oh it is working.........', '.');
+select ltrim('.....Oh it is working.........', '.');
+select rtrim('.....Oh it is working.........', '.');
+
+select 'hello' = 'Hello';    --0 as it is false
+select Lower('hello') = Lower('Hello');    --1 as it is true
+select Upper('hello') = Upper('Hello');
+
+
+--------------------------------------------------------------------
+----------------------Numbers--------------------------
+--------------------------------------------------------------------
+Select TYPEOF(1+1);    --integer
+select typeof(1.0+1);    --real
+select typeof('hel');    --text
+select typeof('hel'+'bal');    --integer   (try to convert text to integer then add them);
+select 'hel'+'bel';    --0
+
+select Cast(1 as real) /2;    --0.5
+select 17/5, 17%5;
+
+select 2.55555;
+select round(2.55555), round(2.55555,0);
+select round(2.55555, 3);
+
+
+--------------------------------------------------------------------
+----------------------Dates and Times--------------------------
+--------------------------------------------------------------------
+Select datetime('now');
+select date('now');
+select time('now');
+select datetime('now', '+1 day');
+select datetime('now', '+3 days');
+select datetime('now', '-1 month');
+select datetime('now', '+1 year');
+select datetime('now', '+3 hours', '+27 minutes', '-1 day', '+3 years');
+
+
+--------------------------------------------------------------------
+----------------------Aggregates--------------------------
+--------------------------------------------------------------------
+--group by, having, count, avg, min, max, sum
+select PI();
+
+--------------------------------------------------------------------
+----------------------Transactions--------------------------
+--------------------------------------------------------------------
+--transactions are used to increase performance, it can be 20 times faster to insert 1000 records 
+begin transaction;    --it may be start transaction in mysql or in other databases
+insert into test values(5, 'No way home', 'Undefeted');
+update test set a = 6 where a=5;
+select * from test;
+end transaction;    --it may be commit in other databases
+
+
+begin transaction;
+insert into test values(5, 'No way home', 'Undefeted');
+update test set a = 6 where a=5;
+select * from test;
+rollback;
+
+
+--------------------------------------------------------------------
+----------------------Triggers--------------------------
+--------------------------------------------------------------------
+drop table if exists sk_customer;
+drop table if exists sk_sales;
+
+--triggers are events that occurs automatically on some action
+create table sk_customer(id integer primary key, name text, last_sale_id integer);
+create table sk_sales(id integer primary key, customer_id integer);
+
+insert into sk_customer(name) values('sachin');
+insert into sk_customer(name) values('Pradeep');
+insert into sk_customer(name) values('Arun');
+
+select * from sk_customer;
+
+create trigger update_last_slae_id after insert on sk_sales
+begin
+update sk_customer set last_sale_id = NEW.id where NEW.customer_id = sk_customer.id;
+--NEW keywork represents the virtual row that is inserted in sk_sales
+end
+;
+
+insert into sk_sales(id, customer_id) values(10, 1);
+insert into sk_sales(id, customer_id) values(20, 2);
+insert into sk_sales(id, customer_id) values(30, 3);
+
+delete from sk_sales;
+
+
+--triggers can also be used to not update the table for example
+drop table if exists Noupdate;
+create table Noupdate(price integer);
+insert into Noupdate values(10);
+
+create trigger noupdate_on_negative_price before update on Noupdate
+begin
+    select raise(rollback, 'Price can not be negative') from Noupdate where NEW.price < 0; 
+end;
+
+begin transaction;
+update Noupdate set price = -1;
+end transaction;
+
+select * from Noupdate;
+
+
+--------------------------------------------------------------------
+----------------------Views and Subselects--------------------------
+--------------------------------------------------------------------
+select * from customer;
+
+drop table if exists t;
+
+create table t(stateandzip text);
+insert into t values('CA98765');
+insert into t values('AZ98765');
+insert into t values('CA98765');
+
+ select c.state, c.name, c.address, helper.state from 
+ (
+     select substr(stateandzip, 1, 2) as state, substr(stateandzip, 3,4) as zip from t    --can use this temporary table as regular table to make a join query
+ ) as helper 
+ join 
+ customer as c on helper.state = c.state;
+
+
+create view customerView as 
+select name, address from customer;
+
+--we can use view as table and can also use in joins as well same as table
+select * from customerView;
+
+drop view if exists customerView;
+
+--------------------------------------------------------------------
+----------------------A simple crud application--------------------------
+--------------------------------------------------------------------
+
+select * from test;
+
+
+
+--mysql commands
+select now();
+
+select if(a=6, 'true', 'false') from test;
+
+show databases;
+show tables;
+
+show recyclebin;
+
+
+
+
